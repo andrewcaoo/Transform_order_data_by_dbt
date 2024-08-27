@@ -1,0 +1,17 @@
+dbtairflow:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: gg39262.europe-west4.gcp
+
+      # User/password auth
+      user: andrewcao002
+      password: Cloudpass@123
+
+      role: ACCOUNTADMIN
+      database: DBT_DB
+      warehouse: dbt_wh
+      schema: dbt_schema
+      threads: 10
+      client_session_keep_alive: False

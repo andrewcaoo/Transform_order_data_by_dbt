@@ -18,3 +18,21 @@ sources:
               - relationships:
                   to: source('tpch', 'orders')
                   field: o_orderkey
+      - name: region
+        columns:
+          - name: R_REGIONKEY
+            tests:
+              - relationships:
+                  to: source('tpch', 'nations')
+                  field: N_REGIONKEY
+      - name: nation
+        columns:
+          - name: N_NATIONKEY
+            tests:
+              - relationships:
+                  to: source('tpch', 'SUPPLIER')
+                  field: S_NATIONKEY
+      - name: part
+      - name: customer
+      - name: supplier
+      - name: partsupp

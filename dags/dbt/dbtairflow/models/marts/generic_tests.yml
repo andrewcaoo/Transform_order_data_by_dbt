@@ -12,4 +12,4 @@ models:
       - name: status_code
         tests:
           - accepted_values:
-              values: ['P', 'O', 'F']
+              values: ["P", "O", "F"]
