@@ -19,7 +19,7 @@ with int_order_items as (
         orders.order_date
 ),
 
-int_order_items_sum as (
+final as (
     select 
         order_key,
         sum(extended_price) as gross_item_sales_amount,
@@ -28,20 +28,20 @@ int_order_items_sum as (
         int_order_items
     group by
         order_key
-),
-
-final as (
-    select
-        orders.*,
-        order_item_summary.gross_item_sales_amount,
-        order_item_summary.item_discount_amount
-    from
-        DBT_DB.dbt_schema.stg_tpch_orders as orders
-    join
-        int_order_items_sum as order_item_summary
-            on orders.order_key = order_item_summary.order_key
-    order by 
-        orders.order_date
 )
+
+-- final as (
+--     select
+--         orders.*,
+--         order_item_summary.gross_item_sales_amount,
+--         order_item_summary.item_discount_amount
+--     from
+--         DBT_DB.dbt_schema.stg_tpch_orders as orders
+--     join
+--         int_order_items_sum as order_item_summary
+--             on orders.order_key = order_item_summary.order_key
+--     order by 
+--         orders.order_date
+-- )
 
 select * from final

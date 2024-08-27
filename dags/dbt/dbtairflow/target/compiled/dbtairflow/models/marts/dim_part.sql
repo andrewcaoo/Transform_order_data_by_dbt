@@ -1,0 +1,1 @@
+select * from DBT_DB.dbt_schema.stg_tpch_part
