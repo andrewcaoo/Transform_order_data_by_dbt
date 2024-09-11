@@ -1,0 +1,69 @@
+name: CI/CD for dbt and Airflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install dbt
+          pip install snowflake-connector-python
+          pip install dbt-snowflake
+
+      - name: Set up dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          echo "your-snowflake-profile" > ~/.dbt/profiles.yml
+
+      - name: Run dbt tests
+        run: |
+          dbt run --models staging
+          dbt run --models marts
+          dbt test
+
+  airflow:
+    runs-on: ubuntu-latest
+    needs: dbt
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install apache-airflow
+          pip install apache-airflow-providers-snowflake
+
+      - name: Setup Airflow
+        run: |
+          airflow db init
+          airflow connections add 'snowflake_conn' \
+            --conn-type 'snowflake' \
+            --conn-extra '{"account": "vu96735", "warehouse": "dbt_wh", "database": "dbt_db", "schema": "DBT_SCHEMA", "role": "dbt_role"}'
+
+      - name: Deploy Airflow DAGs
+        run: |
+          mkdir -p ~/airflow/dags
+          cp -r dags/* ~/airflow/dags/
